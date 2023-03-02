@@ -1,0 +1,22 @@
+version: '3.9'
+
+services:
+  go-app:
+    container_name: go-app
+    image: heepoke/go-app:1.0.0
+    build: .
+    environment:
+      DATABASE_URL: "host=db user=yoyo password=1234 dbname=gomux sslmode=disable"
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+  db:
+    container_name: gomux-db
+    image: postgres:12
+    ports:
+      - 5434:5432
+    environment:
+      POSTGRES_USER: yoyo
+      POSTGRES_PASSWORD: 1234
+      POSTGRES_DB: gomux
