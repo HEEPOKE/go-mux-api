@@ -1,6 +1,8 @@
 package main
 
 import (
+	"api/config"
+	"api/routes"
 	"fmt"
 
 	"github.com/joho/godotenv"
@@ -11,6 +13,6 @@ func main() {
 	if err != nil {
 		fmt.Println("Error loading .env file")
 	}
-	// config.Database()
-	// routes.Router()
+	config.Connect()
+	routes.Router()
 }
