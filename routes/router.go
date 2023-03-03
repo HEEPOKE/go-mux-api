@@ -18,4 +18,5 @@ func Router() {
 	})
 
 	http.ListenAndServe(":"+os.Getenv("PORT"), r)
+	fmt.Println("http:\\localhost:" + os.Getenv("PORT"))
 }

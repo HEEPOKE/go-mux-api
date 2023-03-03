@@ -9,5 +9,4 @@ type User struct {
 	Email    string `json:"email"`
 	Tel      string `json:"tel"`
 	Role     int    `json:"role"`
-	Shop     []Shop
 }
