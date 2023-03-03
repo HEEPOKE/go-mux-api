@@ -5,12 +5,11 @@ import (
 	UserController "api/controllers/user"
 	"fmt"
 	"net/http"
-	"os"
 
 	"github.com/gorilla/mux"
 )
 
-func Router() {
+func Router(port string) {
 	r := mux.NewRouter()
 	r.Use(config.Cors)
 
@@ -23,5 +22,5 @@ func Router() {
 	user := api.PathPrefix("/user").Subrouter()
 	user.HandleFunc("/listUser", UserController.UsersList).Methods("GET")
 
-	http.ListenAndServe(":"+os.Getenv("PORT"), r)
+	http.ListenAndServe(":"+port, r)
 }

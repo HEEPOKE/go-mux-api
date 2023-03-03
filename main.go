@@ -5,6 +5,7 @@ import (
 	"api/routes"
 	"api/utils"
 	"fmt"
+	"os"
 
 	"github.com/joho/godotenv"
 )
@@ -17,5 +18,5 @@ func main() {
 
 	utils.LogPort()
 	config.Connect()
-	routes.Router()
+	routes.Router(os.Getenv("PORT"))
 }
