@@ -22,21 +22,23 @@ func GetListUser(w http.ResponseWriter, r *http.Request) {
 }
 
 func CreateUser(w http.ResponseWriter, r *http.Request) {
-	var users models.User
-	err := json.NewDecoder(r.Body).Decode(&users)
-	if err != nil {
+	var user models.User
+	if err := json.NewDecoder(r.Body).Decode(&user); err != nil {
 		common.RespondWithError(w, http.StatusBadRequest, "Invalid request payload")
 		return
 	}
 
-	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(users.Password), bcrypt.DefaultCost)
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
 	if err != nil {
 		common.RespondWithError(w, http.StatusInternalServerError, "Failed to hash password")
 		return
 	}
+	user.Password = string(hashedPassword)
 
-	users.Password = string(hashedPassword)
+	if err := config.DB.Create(&user).Error; err != nil {
+		common.RespondWithError(w, http.StatusInternalServerError, "Failed to create user")
+		return
+	}
 
-	config.DB.Create(&users)
-	common.RespondWithJSON(w, http.StatusCreated, "Success", users)
+	common.RespondWithJSON(w, http.StatusCreated, "Success", user)
 }
