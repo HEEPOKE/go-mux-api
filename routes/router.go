@@ -21,6 +21,7 @@ func Router(port string) {
 
 	user := api.PathPrefix("/user").Subrouter()
 	user.HandleFunc("/listUser", UserController.UsersList).Methods("GET")
+	user.HandleFunc("/add", UserController.UserCreate).Methods("POST")
 
 	http.ListenAndServe(":"+port, r)
 }
