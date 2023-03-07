@@ -42,6 +42,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 
 	exp := time.Now().Add(time.Hour * 72).Unix()
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
+		"id":       user.ID,
 		"username": user.Username,
 		"email":    user.Email,
 		"exp":      exp,
@@ -54,6 +55,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	}
 
 	common.RespondWithJSON(w, http.StatusOK, "Success", map[string]string{
+		"id":    strconv.Itoa(int(user.ID)),
 		"token": tokenString,
 		"exp":   strconv.FormatInt(exp, 10),
 	})
