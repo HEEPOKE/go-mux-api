@@ -12,3 +12,7 @@ func UsersList(w http.ResponseWriter, r *http.Request) {
 func UserCreate(w http.ResponseWriter, r *http.Request) {
 	UserServices.CreateUser(w, r)
 }
+
+func UserUpdate(w http.ResponseWriter, r *http.Request) {
+	UserServices.UpdateUser(w, r)
+}

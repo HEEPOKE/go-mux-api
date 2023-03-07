@@ -7,18 +7,19 @@ import (
 	"encoding/json"
 	"net/http"
 
+	"github.com/gorilla/mux"
 	"golang.org/x/crypto/bcrypt"
 )
 
 func GetListUser(w http.ResponseWriter, r *http.Request) {
-	var users []models.User
-	err := config.DB.Find(&users).Error
+	var user []models.User
+	err := config.DB.Find(&user).Error
 	if err != nil {
 		common.RespondWithError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
 
-	common.RespondWithJSON(w, http.StatusOK, "success", users)
+	common.RespondWithJSON(w, http.StatusOK, "success", user)
 }
 
 func CreateUser(w http.ResponseWriter, r *http.Request) {
@@ -41,4 +42,28 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 	}
 
 	common.RespondWithJSON(w, http.StatusCreated, "Success", user)
+}
+
+func UpdateUser(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	param := vars["id"]
+
+	var user models.User
+	if err := json.NewDecoder(r.Body).Decode(&user); err != nil {
+		common.RespondWithError(w, http.StatusBadRequest, "Invalid request payload")
+		return
+	}
+
+	var oldUser models.User
+	if err := config.DB.Where("id = ?", param).First(&oldUser).Error; err != nil {
+		common.RespondWithError(w, http.StatusNotFound, "User not found")
+		return
+	}
+
+	if err := config.DB.Model(&oldUser).Updates(user).Error; err != nil {
+		common.RespondWithError(w, http.StatusInternalServerError, "Failed to update user")
+		return
+	}
+
+	common.RespondWithJSON(w, http.StatusOK, "Success", user)
 }
