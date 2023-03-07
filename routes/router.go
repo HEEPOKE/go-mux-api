@@ -2,6 +2,7 @@ package routes
 
 import (
 	"api/config"
+	AuthController "api/controllers/auth"
 	UserController "api/controllers/user"
 	"fmt"
 	"net/http"
@@ -18,6 +19,9 @@ func Router(port string) {
 	})
 
 	api := r.PathPrefix("/api").Subrouter()
+
+	auth := api.PathPrefix("/auth").Subrouter()
+	auth.HandleFunc("/login", AuthController.Login).Methods("POST")
 
 	user := api.PathPrefix("/user").Subrouter()
 	user.HandleFunc("/listUser", UserController.UsersList).Methods("GET")
