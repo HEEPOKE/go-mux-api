@@ -7,6 +7,7 @@ import (
 	"encoding/json"
 	"net/http"
 	"os"
+	"strconv"
 	"time"
 
 	"github.com/golang-jwt/jwt"
@@ -39,10 +40,11 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	exp := time.Now().Add(time.Hour * 72).Unix()
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
 		"username": user.Username,
 		"email":    user.Email,
-		"exp":      time.Now().Add(time.Hour * 72).Unix(),
+		"exp":      exp,
 	})
 
 	tokenString, err := token.SignedString([]byte(secret))
@@ -53,5 +55,6 @@ func Login(w http.ResponseWriter, r *http.Request) {
 
 	common.RespondWithJSON(w, http.StatusOK, "Success", map[string]string{
 		"token": tokenString,
+		"exp":   strconv.FormatInt(exp, 10),
 	})
 }
