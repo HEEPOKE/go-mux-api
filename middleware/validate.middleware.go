@@ -11,39 +11,36 @@ import (
 	"github.com/golang-jwt/jwt"
 )
 
-var secret = os.Getenv("JWT_SECRET")
+var secret = []byte(os.Getenv("JWT_SECRET"))
 
 func JwtMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		header := r.Header.Get("Authorization")
-		tokenString := strings.Replace(header, "Bearer ", "", 1)
-		if tokenString == "" {
+		tokenString := strings.Split(header, " ")
+		fmt.Println(tokenString[1])
+		if len(tokenString) != 2 {
 			common.RespondWithError(w, http.StatusUnauthorized, "Token Invalid")
 			return
 		}
-		token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
+		token, err := jwt.Parse(tokenString[1], func(token *jwt.Token) (interface{}, error) {
 			if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 				return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
 			}
 
-			return []byte(secret), nil
+			return secret, nil
 		})
-		if err != nil {
-			common.RespondWithError(w, http.StatusUnauthorized, "Unauthorized request")
+
+		if err != nil || !token.Valid {
+			common.RespondWithError(w, http.StatusUnauthorized, "Unauthorized")
 			return
 		}
 
-		if !token.Valid {
-			common.RespondWithError(w, http.StatusUnauthorized, "Token not found")
-			return
-		}
+		claims := token.Claims.(jwt.MapClaims)
+		exp := int64(claims["exp"].(float64))
 
-		if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
-			exp := int64(claims["exp"].(float64))
-			if time.Now().Unix() > exp {
-				common.RespondWithError(w, http.StatusUnauthorized, "Token expired")
-				return
-			}
+		if time.Now().Unix() > exp {
+			common.RespondWithError(w, http.StatusUnauthorized, "Token expired")
+			return
 		}
 
 		next.ServeHTTP(w, r)

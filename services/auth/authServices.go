@@ -40,7 +40,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	exp := time.Now().Add(time.Hour * 72).Unix()
+	exp := time.Now().Add(time.Hour * 1).Unix()
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
 		"id":       user.ID,
 		"username": user.Username,
