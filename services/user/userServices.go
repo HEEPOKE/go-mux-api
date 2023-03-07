@@ -65,5 +65,5 @@ func UpdateUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	common.RespondWithJSON(w, http.StatusOK, "Success", user)
+	common.RespondWithJSON(w, http.StatusOK, "Success")
 }
