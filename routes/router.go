@@ -4,6 +4,7 @@ import (
 	"api/config"
 	AuthController "api/controllers/auth"
 	UserController "api/controllers/user"
+	"api/middleware"
 	"fmt"
 	"net/http"
 
@@ -19,8 +20,10 @@ func Router(port string) {
 	})
 
 	api := r.PathPrefix("/api").Subrouter()
+
 	auth := api.PathPrefix("/auth").Subrouter()
 	user := api.PathPrefix("/user").Subrouter()
+	user.Use(middleware.JwtMiddleware)
 
 	auth.HandleFunc("/login", AuthController.Login).Methods("POST")
 
