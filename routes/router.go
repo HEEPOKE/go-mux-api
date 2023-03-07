@@ -23,6 +23,7 @@ func Router(port string) {
 	user.HandleFunc("/listUser", UserController.UsersList).Methods("GET")
 	user.HandleFunc("/add", UserController.UserCreate).Methods("POST")
 	user.HandleFunc("/update/{id}", UserController.UserUpdate).Methods("PUT")
+	user.HandleFunc("/delete/{id}", UserController.UserDelete).Methods("DELETE")
 
 	http.ListenAndServe(":"+port, r)
 }

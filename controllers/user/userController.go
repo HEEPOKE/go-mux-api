@@ -16,3 +16,7 @@ func UserCreate(w http.ResponseWriter, r *http.Request) {
 func UserUpdate(w http.ResponseWriter, r *http.Request) {
 	UserServices.UpdateUser(w, r)
 }
+
+func UserDelete(w http.ResponseWriter, r *http.Request) {
+	UserServices.DeleteUser(w, r)
+}

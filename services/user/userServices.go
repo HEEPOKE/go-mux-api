@@ -67,3 +67,17 @@ func UpdateUser(w http.ResponseWriter, r *http.Request) {
 
 	common.RespondWithJSON(w, http.StatusOK, "Success")
 }
+
+func DeleteUser(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	id := vars["id"]
+
+	var user models.User
+	if err := config.DB.Where("id = ?", id).First(&user).Error; err != nil {
+		common.RespondWithError(w, http.StatusNotFound, "User not found")
+		return
+	}
+
+	config.DB.Delete(&user)
+	common.RespondWithJSON(w, http.StatusOK, "Success")
+}
