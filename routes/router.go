@@ -19,12 +19,12 @@ func Router(port string) {
 	})
 
 	api := r.PathPrefix("/api").Subrouter()
-
 	auth := api.PathPrefix("/auth").Subrouter()
+	user := api.PathPrefix("/user").Subrouter()
+
 	auth.HandleFunc("/login", AuthController.Login).Methods("POST")
 
-	user := api.PathPrefix("/user").Subrouter()
-	user.HandleFunc("/listUser", UserController.UsersList).Methods("GET")
+	user.HandleFunc("/", UserController.UsersList).Methods("GET")
 	user.HandleFunc("/add", UserController.UserCreate).Methods("POST")
 	user.HandleFunc("/update/{id}", UserController.UserUpdate).Methods("PUT")
 	user.HandleFunc("/delete/{id}", UserController.UserDelete).Methods("DELETE")
